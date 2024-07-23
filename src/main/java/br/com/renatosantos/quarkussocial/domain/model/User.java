@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity(name = "\"User\"")
-public class User extends PanacheEntityBase {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
