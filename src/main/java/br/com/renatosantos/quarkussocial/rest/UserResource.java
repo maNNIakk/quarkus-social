@@ -5,7 +5,6 @@ import br.com.renatosantos.quarkussocial.domain.repository.UserRepository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -26,12 +25,9 @@ public class UserResource {
     @POST
     @Transactional
     public Response createUser(@Valid User newUser) {
-        try {
-            userRepository.persist(newUser);
+             userRepository.persist(newUser);
             return Response.status(Response.Status.CREATED).entity(newUser).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(400, "Algo errado aqui parsa").build();
-        }
+
     }
 
     @GET

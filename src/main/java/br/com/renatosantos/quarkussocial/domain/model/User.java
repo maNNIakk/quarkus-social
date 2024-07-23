@@ -1,13 +1,8 @@
 package br.com.renatosantos.quarkussocial.domain.model;
 
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.util.Objects;
 
@@ -16,14 +11,18 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "name")
+    @NotBlank(message = "Name is required")
     @Size(min = 1, max = 100, message = "Name must be between 1 and 100 characters")
     @Pattern(regexp = "^[a-zA-Z]+$", message = "Name must contain only alphabetic characters")
     private String name;
 
     @Column(name = "age")
+    @NotNull(message = "Age must be provided")
     @Min(value = 1, message = "Age must be between 1 and 200")
     @Max(value = 200, message = "Age must be between 1 and 200")
+
     private Integer age;
 
     public String getName() {
