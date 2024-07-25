@@ -6,7 +6,7 @@ import lombok.*;
 
 @Data
 @JsonbPropertyOrder({"id","name","age"})
-@Entity(name = "\"User\"")
+@Entity(name = "\"Users\"")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
