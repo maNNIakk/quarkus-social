@@ -2,6 +2,7 @@ package br.com.renatosantos.quarkussocial.rest;
 
 import br.com.renatosantos.quarkussocial.domain.model.User;
 import br.com.renatosantos.quarkussocial.domain.repository.UserRepository;
+import br.com.renatosantos.quarkussocial.rest.dto.CreateUserRequest;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -24,19 +25,22 @@ public class UserResource {
 
     @POST
     @Transactional
-    public Response createUser(@Valid User newUser) {
-             userRepository.persist(newUser);
-            return Response.status(Response.Status.CREATED).entity(newUser).build();
+    public Response createUser(@Valid CreateUserRequest newUser) {
+             User user = new User();
+             user.setAge(newUser.getAge());
+             user.setName(newUser.getName());
+             userRepository.persist(user);
+            return Response.status(Response.Status.CREATED).entity(user).build();
 
     }
 
     @GET
     public Response listAllUsers(@QueryParam("page") Integer page, @QueryParam("size") Integer size) {
-        int pageNumber = (page != null) ? page : 0;
+        int pageIndex = (page != null) ? page : 0;
         int pageSize = (size != null) ? size : 15;
 
         PanacheQuery<User> query =
-                userRepository.find("ORDER BY id ASC").page(pageNumber,
+                userRepository.find("ORDER BY id ASC").page(pageIndex,
                 pageSize);
         return Response.ok(query.list()).build();
     }
@@ -44,15 +48,17 @@ public class UserResource {
     @PUT
     @Path("{id}")
     @Transactional
-    public Response updateUser(@PathParam("id") Long id, @Valid User updatedUser) {
+    public Response updateUser(@PathParam("id") Long id,
+                               @Valid CreateUserRequest updatedUser) {
         User user = userRepository.findById(id);
+
         if (user == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         user.setName(updatedUser.getName());
         user.setAge(updatedUser.getAge());
 
-        userRepository.persist(updatedUser);
+        userRepository.persist(user);
         return Response.ok(user).build();
     }
 
