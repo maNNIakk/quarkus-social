@@ -1,13 +1,14 @@
 package br.com.renatosantos.quarkussocial.domain.model;
 
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "\"Posts\"")
 @Data
+@JsonbPropertyOrder({"id","dateTime","text","user"})
+@Entity(name = "\"Posts\"")
 public class Post {
 
     @Id
@@ -23,4 +24,9 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @PrePersist
+    public void prePersist(){
+        setDateTime(LocalDateTime.now().withNano(0));
+    }
 }

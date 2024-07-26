@@ -9,5 +9,5 @@ id bigserial not null primary key,
 CREATE TABLE "Posts" (
 id bigserial not null primary key,
 post_text varchar(150) not null,
-dateTime timestamp,
+dateTime timestamp not null,
 user_id bigint not null references "User"(id))
