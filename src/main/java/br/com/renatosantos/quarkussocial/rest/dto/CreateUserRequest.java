@@ -11,8 +11,8 @@ public class CreateUserRequest {
             "alphabetic characters")
     private String name;
 
-    @Min(value = 1, message = "Age must be between 1 and 200")
-    @Max(value = 200, message = "Age must be between 1 and 200")
+    @Min(value = 0, message = "Age must be between 0 and 130")
+    @Max(value = 130, message = "Age must be between 0 and 130")
     @NotNull(message = "Age is required")
     private Integer age;
 }

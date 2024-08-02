@@ -1,14 +1,20 @@
 package br.com.renatosantos.quarkussocial.handlers.mappers;
 
-
 import br.com.renatosantos.quarkussocial.handlers.exceptions.SocialMediaExceptions;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class contains exception mappers for custom exceptions in the social media application.
+ */
 public class SocialMediaExceptionMappers {
 
+    /**
+     * Exception mapper for SelfFollowException.
+     * Logs the exception and returns a NOT_ACCEPTABLE response with the exception message.
+     */
     @Provider
     @Slf4j
     public static class SelfFollowExceptionMapper implements ExceptionMapper<SocialMediaExceptions.SelfFollowException> {
@@ -21,6 +27,10 @@ public class SocialMediaExceptionMappers {
         }
     }
 
+    /**
+     * Exception mapper for AlreadyFollowedException.
+     * Logs the exception and returns a CONFLICT response with the exception message.
+     */
     @Provider
     @Slf4j
     public static class AlreadyFollowedExceptionMapper implements ExceptionMapper<SocialMediaExceptions.AlreadyFollowedException> {
@@ -33,6 +43,10 @@ public class SocialMediaExceptionMappers {
         }
     }
 
+    /**
+     * Exception mapper for NullPointerException.
+     * Logs the exception and returns a NOT_FOUND response with the exception message.
+     */
     @Provider
     @Slf4j
     public static class NullPointerExceptionMapper implements ExceptionMapper<NullPointerException> {
