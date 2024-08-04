@@ -69,11 +69,17 @@ public class PostResource {
             PanacheQuery<Post> query = postRepository.find("user", Sort.by(
                     "dateTime", Sort.Direction.Descending), user);
 
-             var list = query.list();
-             var postResponseList =
-                     list.stream().map(PostResponse::fromEntity).collect(Collectors.toList());
+            var list = query.list();
+            if (list.isEmpty()) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("User " + user.getName() + " does not have any posts.")
+                        .build();
+            } else {
+                var postResponseList =
+                        list.stream().map(PostResponse::fromEntity).collect(Collectors.toList());
 
-             return Response.ok(postResponseList).build();
+                return Response.ok(postResponseList).build();
+            }
         } catch (NullPointerException e){
             log.error("Caught an exception: {}", e.getMessage());
             return Response.status(Response.Status.NOT_FOUND)
@@ -81,4 +87,6 @@ public class PostResource {
                     .build();
         }
     }
+
+
 }

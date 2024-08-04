@@ -12,4 +12,9 @@ public class SocialMediaExceptions{
             super(message);
         }
     }
+
+    public static class NotFollowingException extends RuntimeException {
+        public NotFollowingException(String message){super(message); }
+        }
+
 }

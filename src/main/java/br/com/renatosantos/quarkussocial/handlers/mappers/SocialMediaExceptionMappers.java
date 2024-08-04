@@ -43,6 +43,19 @@ public class SocialMediaExceptionMappers {
         }
     }
 
+    @Provider
+    @Slf4j
+    public static class NotFollowingException implements ExceptionMapper<SocialMediaExceptions.NotFollowingException> {
+        @Override
+        public Response toResponse(SocialMediaExceptions.NotFollowingException exception) {
+            log.error("Caught an NotFollowingException: {}",
+                    exception.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(exception.getMessage())
+                    .build();
+        }
+    }
+
     /**
      * Exception mapper for NullPointerException.
      * Logs the exception and returns a NOT_FOUND response with the exception message.

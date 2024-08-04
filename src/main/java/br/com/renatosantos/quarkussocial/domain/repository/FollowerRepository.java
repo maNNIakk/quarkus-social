@@ -7,6 +7,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Parameters;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -46,6 +47,10 @@ public class FollowerRepository implements PanacheRepository<Follower> {
                 "=:user",params);
         Optional<Follower> result = query.firstResultOptional();
         return result.isPresent();
+    }
+
+    public List<Follower> findByUser(Long userId){
+        return find("user.id =?1", userId).list();
     }
 }
 
