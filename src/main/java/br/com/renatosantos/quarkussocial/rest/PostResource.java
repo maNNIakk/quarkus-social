@@ -2,8 +2,10 @@ package br.com.renatosantos.quarkussocial.rest;
 
 import br.com.renatosantos.quarkussocial.domain.model.Post;
 import br.com.renatosantos.quarkussocial.domain.model.User;
+import br.com.renatosantos.quarkussocial.domain.repository.FollowerRepository;
 import br.com.renatosantos.quarkussocial.domain.repository.PostRepository;
 import br.com.renatosantos.quarkussocial.domain.repository.UserRepository;
+import br.com.renatosantos.quarkussocial.handlers.exceptions.SocialMediaExceptions;
 import br.com.renatosantos.quarkussocial.rest.dto.CreatePostRequest;
 import br.com.renatosantos.quarkussocial.rest.dto.PostResponse;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -30,11 +32,15 @@ public class PostResource {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final FollowerRepository followerRepository;
+
     @Inject
-    public PostResource(UserRepository userRepository, PostRepository postRepository){
+    public PostResource(UserRepository userRepository,
+                        PostRepository postRepository, FollowerRepository followerRepository){
 
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.followerRepository = followerRepository;
     }
 
     @POST
@@ -61,9 +67,16 @@ public class PostResource {
     }
 
     @GET
-    public Response listUserPosts(@PathParam("userId") Long userId){
+    public Response listUserPosts(@PathParam("userId") Long userId,
+                                  @HeaderParam("followerId") Long followerId ){
         try{
+            User follower = userRepository.findById(followerId);
+            if(follower == null) throw new NullPointerException("User with id" +
+                    " " + userId + " not found, couldn't " +
+                    "list posts");
             User user = userRepository.findById(userId);
+            if(followerRepository.follows(follower,user)){
+
             if(user == null) throw new NullPointerException("User with id " + userId + " not found, couldn't " +
                     "list posts");
             PanacheQuery<Post> query = postRepository.find("user", Sort.by(
@@ -79,6 +92,10 @@ public class PostResource {
                         list.stream().map(PostResponse::fromEntity).collect(Collectors.toList());
 
                 return Response.ok(postResponseList).build();
+            }
+            } else { throw new SocialMediaExceptions.NotFollowingException(
+                    "User " + user.getName() + " is not following user " + follower.getName() + " and cannot see it's posts");
+
             }
         } catch (NullPointerException e){
             log.error("Caught an exception: {}", e.getMessage());
