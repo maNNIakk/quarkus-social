@@ -139,7 +139,7 @@ public Response listFollowers(@PathParam("userId") Long userId){
     @DELETE
     @Transactional
     public Response unfollowUser(@PathParam("userId") Long userId,
-                                 @QueryParam("followerId") Long followerId) {
+                                 @HeaderParam("followerId") Long followerId) {
         var user = userRepository.findById(userId);
         if (user == null)
             throw new NullPointerException("User with id " + userId + " not found");
