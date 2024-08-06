@@ -1,13 +1,13 @@
 package br.com.renatosantos.quarkussocial.domain.model;
 
-import jakarta.json.bind.annotation.JsonbPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-@JsonbPropertyOrder({"id","dateTime","text","user"})
+@JsonPropertyOrder({"id","dateTime","text","user"})
 @Entity(name = "\"Posts\"")
 public class Post {
 

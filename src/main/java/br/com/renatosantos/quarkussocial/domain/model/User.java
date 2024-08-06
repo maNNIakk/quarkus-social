@@ -1,11 +1,11 @@
 package br.com.renatosantos.quarkussocial.domain.model;
 
-import jakarta.json.bind.annotation.JsonbPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Data
-@JsonbPropertyOrder({"id","name","age"})
+@JsonPropertyOrder({"id","name","age"})
 @Entity(name = "\"Users\"")
 public class User {
     @Id
