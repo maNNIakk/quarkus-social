@@ -50,7 +50,7 @@ public class SocialMediaExceptionMappers {
         public Response toResponse(SocialMediaExceptions.NotFollowingException exception) {
             log.error("Caught an NotFollowingException: {}",
                     exception.getMessage());
-            return Response.status(Response.Status.CONFLICT)
+            return Response.status(Response.Status.FORBIDDEN)
                     .entity(exception.getMessage())
                     .build();
         }
