@@ -12,6 +12,8 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
 import jakarta.inject.Inject;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class PostResource {
+
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
@@ -90,7 +93,7 @@ public class PostResource {
 
             var list = query.list();
             if (list.isEmpty()) {
-                return Response.status(Response.Status.NOT_FOUND)
+                return Response.status(Response.Status.OK)
                         .entity("User " + user.getName() + " does not have any posts.")
                         .build();
             } else {

@@ -7,10 +7,11 @@ import br.com.renatosantos.quarkussocial.domain.repository.FollowerRepository;
 import br.com.renatosantos.quarkussocial.domain.repository.PostRepository;
 import br.com.renatosantos.quarkussocial.domain.repository.UserRepository;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
+import io.restassured.http.Header;
 import io.restassured.response.Response;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.*;
 
@@ -30,10 +31,15 @@ public class PostResourceTest {
     private PostRepository postRepository;
     private Long userId;
     private Long followerId;
+    private User user = new User();
+    private User follower = new User();
+    private Follower entity = new Follower();
+    private Post post = new Post();
+
 
     public PostResourceTest(UserRepository userRepository,
-                            FollowerRepository followerRepository,
-                            PostRepository postRepository){
+                            FollowerRepository followerRepository,PostRepository postRepository
+                            ){
         this.userRepository = userRepository;
         this.followerRepository = followerRepository;
         this.postRepository = postRepository;
@@ -42,9 +48,6 @@ public class PostResourceTest {
     @Transactional
     @BeforeEach
     public void setup(){
-        var user = new User();
-        var follower = new User();
-
         user.setName("test_user");
         user.setAge(30);
         userRepository.persist(user);
@@ -56,16 +59,22 @@ public class PostResourceTest {
         userId = user.getId();
         followerId = follower.getId();
 
-        var entity = new Follower();
         entity.setUser(user);
         entity.setFollower(follower);
         followerRepository.persist(entity);
+
+
+        post.setUser(user);
+        post.setDateTime(LocalDateTime.now().withNano(0));
+        post.setText("test_listUserPostsTest");
+
+        postRepository.persist(post);
     }
 
     @Test
     @Order(0)
-    public void testCreatePost(){
-        Post post = new Post();
+    @DisplayName("Create Post Successfully")
+    public void createTestPost(){
 
 
         post.setText("test_post " + LocalDateTime.now().withNano(0));
@@ -78,7 +87,24 @@ public class PostResourceTest {
                  .extract().response();
         assertTrue(response.asString().contains(post.getText()));
         assertEquals(201,response.statusCode());
-
     }
 
+    @Test
+    @Order(1)
+    @DisplayName("Follower Listing User Followed Posts Successfully (having " +
+            "posts)")
+    public void listUserPostsTest(){
+
+        System.out.println("Sending request to /users/" + userId + "/posts");
+
+        Header header = new Header("followerId", String.valueOf(followerId));
+            Response response =
+                    given().contentType(MediaType.APPLICATION_JSON).header(header).when().get(
+                            "/users/" + userId +
+                                    "/posts").then().statusCode(200).extract().response();
+        assertEquals(200,response.statusCode());
+        assertTrue(response.asString().contains(post.getText()));
+        System.out.println("Received response: " + response.asString());
+
+    }
 }
