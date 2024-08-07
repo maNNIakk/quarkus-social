@@ -30,12 +30,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-
 public class PostResource {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final FollowerRepository followerRepository;
+
+
 
     @Inject
     public PostResource(UserRepository userRepository,
@@ -59,7 +60,8 @@ public class PostResource {
             postRepository.persist(post);
 
             return Response.status(Response.Status.CREATED)
-                    .entity("Post saved for user " + user.getName())
+//                    .entity("{\"message\": \"Post saved for user " + user.getName() + "\"}")
+                    .entity(PostResponse.fromEntity(post))
                     .build();
         } catch (NullPointerException e) {
             log.error("Caught an exception: {}", e.getMessage());

@@ -7,13 +7,17 @@ import java.time.LocalDateTime;
 
 @Data
 public class PostResponse {
+    private Long id;
 private String text;
 private LocalDateTime dateTime;
 
+public PostResponse(Post post) {
+    this.id = post.getId();
+    this.text = post.getText();
+    this.dateTime = post.getDateTime();
+}
+
 public static PostResponse fromEntity(Post post){
-    var response = new PostResponse();
-    response.setText(post.getText());
-    response.setDateTime(post.getDateTime());
-    return response;
+    return new PostResponse(post);
 }
 }
