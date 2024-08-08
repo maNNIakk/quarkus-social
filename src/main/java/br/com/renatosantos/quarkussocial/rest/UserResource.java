@@ -58,7 +58,7 @@ public class UserResource {
     @GET
     public Response listAllUsers(@QueryParam("page") Integer page, @QueryParam("size") Integer size) {
         int pageIndex = (page != null) ? page : 0;
-        int pageSize = (size != null) ? size : 15;
+        int pageSize = (size != null) ? size : 30;
 
         PanacheQuery<User> query =
                 userRepository.find("ORDER BY id ASC").page(pageIndex, pageSize);

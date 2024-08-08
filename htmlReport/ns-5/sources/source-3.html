@@ -1,0 +1,261 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > UserResource</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">br.com.renatosantos.quarkussocial.rest</a>
+</div>
+
+<h1>Coverage Summary for Class: UserResource (br.com.renatosantos.quarkussocial.rest)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserResource</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (3/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (2/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42.9%
+  </span>
+  <span class="absValue">
+    (12/28)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">UserResource$quarkusrestinvoker$createUser_7f1af55cd9820d497be2986bf38bf59ee273c30c</td>
+  </tr>
+  <tr>
+    <td class="name">UserResource$quarkusrestinvoker$deleteUser_9b17e69d890863e6b30f6ed960ae84b40a3aec7f</td>
+  </tr>
+  <tr>
+    <td class="name">UserResource$quarkusrestinvoker$listAllUsers_c5bb78de1027532eeab9a9f2d2e5e91ffceb8c72</td>
+  </tr>
+  <tr>
+    <td class="name">UserResource$quarkusrestinvoker$updateUser_f36c2f1b514320141017aae22eb4134c912f0efa</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (3/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (2/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42.9%
+  </span>
+  <span class="absValue">
+    (12/28)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package br.com.renatosantos.quarkussocial.rest;
+&nbsp;
+&nbsp;import br.com.renatosantos.quarkussocial.domain.model.User;
+&nbsp;import br.com.renatosantos.quarkussocial.domain.repository.UserRepository;
+&nbsp;import br.com.renatosantos.quarkussocial.rest.dto.CreateUserRequest;
+&nbsp;import io.quarkus.hibernate.orm.panache.PanacheQuery;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;import jakarta.ws.rs.core.MediaType;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;
+&nbsp;/**
+&nbsp; * UserResource class handles HTTP requests related to user management in the Quarkus Social application.
+&nbsp; * It provides endpoints for creating, reading, updating, and deleting user records.
+&nbsp; */
+&nbsp;@Path(&quot;/users&quot;)
+&nbsp;@Produces(MediaType.APPLICATION_JSON)
+&nbsp;@Consumes(MediaType.APPLICATION_JSON)
+&nbsp;public class UserResource {
+&nbsp;
+&nbsp;    private final UserRepository userRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor for UserResource class.
+&nbsp;     *
+&nbsp;     * @param userRepository The UserRepository instance to interact with the user data.
+&nbsp;     */
+&nbsp;    @Inject
+<b class="fc">&nbsp;    public UserResource(UserRepository userRepository) {</b>
+<b class="fc">&nbsp;        this.userRepository = userRepository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new user record using the provided CreateUserRequest object.
+&nbsp;     *
+&nbsp;     * @param newUser The CreateUserRequest object containing the user details.
+&nbsp;     * @return HTTP 201 Created with the created user object in the response body.
+&nbsp;     */
+&nbsp;    @POST
+&nbsp;    @Transactional
+&nbsp;    public Response createUser(@Valid CreateUserRequest newUser) {
+<b class="fc">&nbsp;        User user = new User();</b>
+<b class="fc">&nbsp;        user.setAge(newUser.getAge());</b>
+<b class="fc">&nbsp;        user.setName(newUser.getName());</b>
+<b class="fc">&nbsp;        userRepository.persist(user);</b>
+<b class="fc">&nbsp;        return Response.status(Response.Status.CREATED).entity(user).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a list of all user records, with optional pagination support.
+&nbsp;     *
+&nbsp;     * @param page The page number to retrieve. Default is 0.
+&nbsp;     * @param size The number of records per page. Default is 15.
+&nbsp;     * @return HTTP 200 OK with a list of user objects in the response body.
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;    public Response listAllUsers(@QueryParam(&quot;page&quot;) Integer page, @QueryParam(&quot;size&quot;) Integer size) {
+<b class="pc">&nbsp;        int pageIndex = (page != null) ? page : 0;</b>
+<b class="pc">&nbsp;        int pageSize = (size != null) ? size : 15;</b>
+&nbsp;
+<b class="fc">&nbsp;        PanacheQuery&lt;User&gt; query =</b>
+<b class="fc">&nbsp;                userRepository.find(&quot;ORDER BY id ASC&quot;).page(pageIndex, pageSize);</b>
+<b class="fc">&nbsp;        return Response.ok(query.list()).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing user record with the provided CreateUserRequest object.
+&nbsp;     *
+&nbsp;     * @param id The unique identifier of the user to update.
+&nbsp;     * @param updatedUser The CreateUserRequest object containing the updated user details.
+&nbsp;     * @return HTTP 200 OK with the updated user object in the response body.
+&nbsp;     *         HTTP 404 Not Found if the user with the specified id does not exist.
+&nbsp;     */
+&nbsp;    @PUT
+&nbsp;    @Path(&quot;{id}&quot;)
+&nbsp;    @Transactional
+&nbsp;    public Response updateUser(@PathParam(&quot;id&quot;) Long id, @Valid CreateUserRequest updatedUser) {
+<b class="nc">&nbsp;        User user = userRepository.findById(id);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (user == null) {</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.NOT_FOUND).build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        user.setName(updatedUser.getName());</b>
+<b class="nc">&nbsp;        user.setAge(updatedUser.getAge());</b>
+&nbsp;
+<b class="nc">&nbsp;        userRepository.persist(user);</b>
+<b class="nc">&nbsp;        return Response.ok(user).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes the user record with the specified id.
+&nbsp;     *
+&nbsp;     * @param id The unique identifier of the user to delete.
+&nbsp;     * @return HTTP 204 No Content if the user with the specified id is deleted successfully.
+&nbsp;     *         HTTP 404 Not Found if the user with the specified id does not exist.
+&nbsp;     *         HTTP 500 Internal Server Error if an unexpected error occurs during deletion.
+&nbsp;     */
+&nbsp;    @DELETE
+&nbsp;    @Transactional
+&nbsp;    @Path(&quot;{id}&quot;)
+&nbsp;    public Response deleteUser(@PathParam(&quot;id&quot;) Long id) {
+&nbsp;        try {
+<b class="nc">&nbsp;            if (userRepository.deleteById(id)) {</b>
+<b class="nc">&nbsp;                return Response.noContent().build();</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="nc">&nbsp;                        .entity(&quot;User with id &quot; + id + &quot; not found.&quot;)</b>
+<b class="nc">&nbsp;                        .build();</b>
+&nbsp;            }
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .entity(&quot;An unexpected error occurred. Please try again later.&quot;)</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-08 12:37</div>
+</div>
+</body>
+</html>

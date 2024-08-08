@@ -6,6 +6,8 @@ import br.com.renatosantos.quarkussocial.domain.model.User;
 import br.com.renatosantos.quarkussocial.domain.repository.FollowerRepository;
 import br.com.renatosantos.quarkussocial.domain.repository.PostRepository;
 import br.com.renatosantos.quarkussocial.domain.repository.UserRepository;
+import br.com.renatosantos.quarkussocial.rest.PostResource;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.Header;
 import io.restassured.response.Response;
@@ -21,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestHTTPEndpoint(PostResource.class)
 public class PostResourceTest {
 
 
@@ -78,8 +81,8 @@ public class PostResourceTest {
         post.setText("test_post " + LocalDateTime.now().withNano(0));
 
         Response response = given().contentType(MediaType.APPLICATION_JSON)
-                 .body(post)
-                 .when().post("/users/" + userId + "/posts")
+                 .body(post).pathParam("userId",userId)
+                 .when().post()
                  .then()
                  .statusCode(201)
                  .extract().response();
@@ -93,16 +96,23 @@ public class PostResourceTest {
             "posts)")
     public void listUserPostsTest(){
 
-        System.out.println("Sending request to /users/" + userId + "/posts");
-
         Header header = new Header("followerId", String.valueOf(followerId));
             Response response =
-                    given().contentType(MediaType.APPLICATION_JSON).header(header).when().get(
-                            "/users/" + userId +
-                                    "/posts").then().statusCode(200).extract().response();
+                    given().contentType(MediaType.APPLICATION_JSON).header(header).pathParam("userId",userId).when().get().then().statusCode(200).extract().response();
         assertEquals(200,response.statusCode());
         assertTrue(response.asString().contains(post.getText()));
         System.out.println("Received response: " + response.asString());
 
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Create Post for inexistent user")
+    public void deleteTestPost(){
+        Long inexistentUserId = 999L;
+        Header header = new Header("followerId", String.valueOf(followerId));
+        Response response =
+                given().contentType(MediaType.APPLICATION_JSON).header(header).pathParam("userId",inexistentUserId).when().get().then().statusCode(404).extract().response();
+        assertEquals(404,response.statusCode());
     }
 }

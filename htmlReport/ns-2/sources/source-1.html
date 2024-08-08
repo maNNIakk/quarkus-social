@@ -1,0 +1,161 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > FollowerRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">br.com.renatosantos.quarkussocial.domain.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: FollowerRepository (br.com.renatosantos.quarkussocial.domain.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FollowerRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package br.com.renatosantos.quarkussocial.domain.repository;
+&nbsp;
+&nbsp;import br.com.renatosantos.quarkussocial.domain.model.Follower;
+&nbsp;import br.com.renatosantos.quarkussocial.domain.model.User;
+&nbsp;import io.quarkus.hibernate.orm.panache.PanacheQuery;
+&nbsp;import io.quarkus.hibernate.orm.panache.PanacheRepository;
+&nbsp;import io.quarkus.panache.common.Parameters;
+&nbsp;import jakarta.enterprise.context.ApplicationScoped;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository for managing follower relationships in the Quarkus Social application.
+&nbsp; * Implements PanacheRepository for efficient database operations.
+&nbsp; *
+&nbsp; * @author &lt;NAME&gt;
+&nbsp; */
+&nbsp;@ApplicationScoped
+<b class="fc">&nbsp;public class FollowerRepository implements PanacheRepository&lt;Follower&gt; {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if the given follower is following themselves.
+&nbsp;     *
+&nbsp;     * @param follower The user who is potentially following themselves.
+&nbsp;     * @param user The user being followed.
+&nbsp;     * @return True if the follower is the same as the user, false otherwise.
+&nbsp;     */
+&nbsp;    public boolean isSelfFollow(User follower, User user){
+<b class="fc">&nbsp;        return follower.equals(user);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Checks if the given follower is following the specified user.
+&nbsp;     *
+&nbsp;     * @param follower The user who is potentially following the other user.
+&nbsp;     * @param user The user being followed.
+&nbsp;     * @return True if the follower is following the user, false otherwise.
+&nbsp;     */
+&nbsp;    public boolean follows(User follower, User user){
+&nbsp;
+<b class="fc">&nbsp;        var params =</b>
+<b class="fc">&nbsp;                Parameters.with(&quot;follower&quot;, follower).and(&quot;user&quot;, user).map();</b>
+<b class="fc">&nbsp;        find(&quot;follower =:follower and user =:user&quot;, params);</b>
+&nbsp;
+<b class="fc">&nbsp;        PanacheQuery&lt;Follower&gt; query = find(&quot;follower =:follower and user &quot; +</b>
+&nbsp;                &quot;=:user&quot;,params);
+<b class="fc">&nbsp;        Optional&lt;Follower&gt; result = query.firstResultOptional();</b>
+<b class="fc">&nbsp;        return result.isPresent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Follower&gt; findByUser(Long userId){
+<b class="fc">&nbsp;        return find(&quot;user.id =?1&quot;, userId).list();</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-08 12:37</div>
+</div>
+</body>
+</html>

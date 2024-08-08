@@ -1,0 +1,307 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > FollowerResource</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">br.com.renatosantos.quarkussocial.rest</a>
+</div>
+
+<h1>Coverage Summary for Class: FollowerResource (br.com.renatosantos.quarkussocial.rest)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FollowerResource</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (10/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76.9%
+  </span>
+  <span class="absValue">
+    (40/52)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FollowerResource$quarkusrestinvoker$followUser_81e554c1a9a95676a617249ed90edab5993f8b40</td>
+  </tr>
+  <tr>
+    <td class="name">FollowerResource$quarkusrestinvoker$listFollowers_5ddbe9216e139317a1344c5aa5bcd3a7db166ad3</td>
+  </tr>
+  <tr>
+    <td class="name">FollowerResource$quarkusrestinvoker$unfollowUser_becdb866564128f801860b08340f2b80485acef6</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (10/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76.9%
+  </span>
+  <span class="absValue">
+    (40/52)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package br.com.renatosantos.quarkussocial.rest;
+&nbsp;
+&nbsp;import br.com.renatosantos.quarkussocial.domain.model.Follower;
+&nbsp;import br.com.renatosantos.quarkussocial.domain.repository.FollowerRepository;
+&nbsp;import br.com.renatosantos.quarkussocial.domain.repository.UserRepository;
+&nbsp;import br.com.renatosantos.quarkussocial.handlers.exceptions.SocialMediaExceptions;
+&nbsp;import br.com.renatosantos.quarkussocial.rest.dto.FollowerRequest;
+&nbsp;import br.com.renatosantos.quarkussocial.rest.dto.FollowerResponse;
+&nbsp;import br.com.renatosantos.quarkussocial.rest.dto.FollowersPerUserResponse;
+&nbsp;import jakarta.inject.Inject;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import jakarta.ws.rs.*;
+&nbsp;import jakarta.ws.rs.core.MediaType;
+&nbsp;import jakarta.ws.rs.core.Response;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class represents the RESTful resource for managing followers.
+&nbsp; * It handles HTTP requests related to following and unfollowing users.
+&nbsp; *
+&nbsp; * @author Renato
+&nbsp; * @since 1.0.0
+&nbsp; */
+&nbsp;
+&nbsp;@Path(&quot;/users/{userId}/followers&quot;)
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Consumes(MediaType.APPLICATION_JSON)
+&nbsp;@Produces(MediaType.APPLICATION_JSON)
+&nbsp;public class FollowerResource {
+&nbsp;    private final FollowerRepository followerRepository;
+&nbsp;    private final UserRepository userRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor for the FollowerResource class.
+&nbsp;     * It injects the required repositories using CDI.
+&nbsp;     *
+&nbsp;     * @param followerRepository The FollowerRepository instance
+&nbsp;     * @param userRepository The UserRepository instance
+&nbsp;     */
+&nbsp;
+&nbsp;    @Inject
+&nbsp;    public FollowerResource(FollowerRepository followerRepository,
+<b class="fc">&nbsp;                            UserRepository userRepository) {</b>
+<b class="fc">&nbsp;        this.followerRepository = followerRepository;</b>
+<b class="fc">&nbsp;        this.userRepository = userRepository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles HTTP PUT requests to follow a user.
+&nbsp;     * It checks if the user and follower exist, and if the user is not following the follower.
+&nbsp;     * If all conditions are met, it creates a new Follower entity and persists it in the database.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user who wants to follow
+&nbsp;     * @param followerRequest The request containing the ID of the follower
+&nbsp;     * @return A Response with status 200 and a message indicating the successful follow
+&nbsp;     * @throws NullPointerException If the user or follower does not exist
+&nbsp;     * @throws SocialMediaExceptions.SelfFollowException If the user tries to follow themselves
+&nbsp;     * @throws SocialMediaExceptions.AlreadyFollowedException If the user is already following the follower
+&nbsp;     */
+&nbsp;    @PUT
+&nbsp;    @Transactional
+&nbsp;    public Response followUser(@PathParam(&quot;userId&quot;) Long userId,
+&nbsp;                                FollowerRequest followerRequest) {
+<b class="fc">&nbsp;        var user = userRepository.findById(userId);</b>
+<b class="pc">&nbsp;        if (user == null)</b>
+<b class="nc">&nbsp;            throw new NullPointerException(&quot;User with id &quot; + userId + &quot; not found&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        var follower = userRepository.findById(followerRequest.getFollowerId());</b>
+<b class="pc">&nbsp;        if (follower == null)</b>
+<b class="nc">&nbsp;            throw new NullPointerException(&quot;Follower with id &quot; + userId + &quot; &quot; +</b>
+&nbsp;                    &quot;was not &quot; +
+&nbsp;                    &quot;found&quot;);
+<b class="fc">&nbsp;        boolean follows = followerRepository.follows(follower, user);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (followerRepository.isSelfFollow(follower, user)) {</b>
+<b class="nc">&nbsp;            throw new SocialMediaExceptions.SelfFollowException(&quot;User &quot; + user.getName() + &quot; cannot follow himself.&quot;);</b>
+<b class="pc">&nbsp;        } else if (follows) {</b>
+<b class="nc">&nbsp;            throw new SocialMediaExceptions.AlreadyFollowedException(&quot;User &quot; + user.getName() + &quot; is already being followed by user &quot; + follower.getName());</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            var entity = new Follower();</b>
+<b class="fc">&nbsp;            entity.setUser(user);</b>
+<b class="fc">&nbsp;            entity.setFollower(follower);</b>
+<b class="fc">&nbsp;            followerRepository.persist(entity);</b>
+<b class="fc">&nbsp;            return Response.status(Response.Status.OK)</b>
+<b class="fc">&nbsp;                    .entity(&quot;User &quot; + user.getName() + &quot; is now being followed by user &quot; + follower.getName())</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles HTTP GET requests to list the followers of a user.
+&nbsp;     * It retrieves the list of followers from the database and returns them in a response.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user whose followers are to be listed
+&nbsp;     * @return A Response with status 200 and the list of followers
+&nbsp;     * @return A Response with status 404 If the user does not have any
+&nbsp;     * followers
+&nbsp;     * @throws NullPointerException If the user does not exist
+&nbsp;     */
+&nbsp;    @GET
+&nbsp;public Response listFollowers(@PathParam(&quot;userId&quot;) Long userId){
+<b class="fc">&nbsp;    var user = userRepository.findById(userId);</b>
+&nbsp;    
+<b class="pc">&nbsp;    if (user == null) {</b>
+<b class="nc">&nbsp;        throw new NullPointerException(&quot;User with id &quot; + userId + &quot; not found&quot;);</b>
+&nbsp;    }
+&nbsp;    
+<b class="fc">&nbsp;    var list = followerRepository.findByUser(userId);</b>
+&nbsp;    
+<b class="pc">&nbsp;    if (list.isEmpty()) {</b>
+<b class="nc">&nbsp;        return Response.status(Response.Status.NOT_FOUND)</b>
+<b class="nc">&nbsp;                .entity(&quot;User &quot; + user.getName() + &quot; does not have any followers.&quot;)</b>
+<b class="nc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;    
+<b class="fc">&nbsp;    FollowersPerUserResponse responseObject =</b>
+&nbsp;            new FollowersPerUserResponse();
+<b class="fc">&nbsp;    responseObject.setFollowersCount(list.size());</b>
+&nbsp;
+<b class="fc">&nbsp;    var followerList =</b>
+<b class="fc">&nbsp;            list.stream().map(FollowerResponse::new).collect(Collectors.toList());</b>
+<b class="fc">&nbsp;    responseObject.setContent(followerList);</b>
+<b class="fc">&nbsp;    return Response.ok(responseObject).build();</b>
+&nbsp;}
+&nbsp;    /**
+&nbsp;     * Handles HTTP DELETE requests to unfollow a user.
+&nbsp;     * It checks if the user and follower exist, and if the user is following the follower.
+&nbsp;     * If all conditions are met, it deletes the Follower entity from the database.
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user who wants to unfollow
+&nbsp;     * @param followerId The ID of the follower to be unfollowed
+&nbsp;     * @return A Response with status 200 and a message indicating the successful unfollow
+&nbsp;     * @throws NullPointerException If the user or follower does not exist
+&nbsp;     * @throws SocialMediaExceptions.NotFollowingException If the user is not following the follower
+&nbsp;     * @throws IllegalStateException If the follower relationship does not exist in the database
+&nbsp;     */
+&nbsp;    @DELETE
+&nbsp;    @Transactional
+&nbsp;    public Response unfollowUser(@PathParam(&quot;userId&quot;) Long userId,
+&nbsp;                                 @HeaderParam(&quot;followerId&quot;) Long followerId) {
+<b class="fc">&nbsp;        var user = userRepository.findById(userId);</b>
+<b class="pc">&nbsp;        if (user == null)</b>
+<b class="nc">&nbsp;            throw new NullPointerException(&quot;User with id &quot; + userId + &quot; not found&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        var follower = userRepository.findById(followerId);</b>
+<b class="pc">&nbsp;        if (follower == null)</b>
+<b class="nc">&nbsp;            throw new NullPointerException(&quot;Follower with id &quot; + followerId + &quot; not found&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        boolean follows = followerRepository.follows(follower, user);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (!follows) {</b>
+<b class="nc">&nbsp;            throw new SocialMediaExceptions.NotFollowingException(&quot;User &quot; + user.getName() + &quot; is not following user &quot; + follower.getName());</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            var entity = followerRepository.find(&quot;user.id = ?1 and follower.id = ?2&quot;, userId, followerId).firstResult();</b>
+<b class="pc">&nbsp;            if (entity != null) {</b>
+<b class="fc">&nbsp;                followerRepository.delete(entity);</b>
+<b class="fc">&nbsp;                return Response.status(Response.Status.OK)</b>
+<b class="fc">&nbsp;                        .entity(&quot;User &quot; + user.getName() + &quot; is no longer following user &quot; + follower.getName())</b>
+<b class="fc">&nbsp;                        .build();</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                throw new IllegalStateException(&quot;Follower relationship not found&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-08 12:37</div>
+</div>
+</body>
+</html>
