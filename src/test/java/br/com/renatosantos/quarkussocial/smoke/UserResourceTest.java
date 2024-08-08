@@ -101,10 +101,21 @@ class UserResourceTest {
         List<Map<String, Object>> users = response.jsonPath().getList("");
         assertNotNull(users);
         assertTrue(users.size() > 0, "Expected at least one user in the list");
+        System.out.println();
 
-        // Additional assertions for specific user properties if needed
-        Map<String, Object> firstUser = users.get(0);
-        assertEquals("Fulaninho", firstUser.get("name"));
-        assertEquals(20, firstUser.get("age"));
+        boolean found = false;
+
+        for (Map<String,Object> user : users){
+            if(user.get("name").toString().equals("Fulaninho")){
+                System.out.println(user.get("name"));
+                System.out.println(user.get("age"));
+            assertEquals("Fulaninho", user.get("name"));
+            assertEquals(20, user.get("age"));
+            found = true;
+            break;
+            }
+
+             }
+        assertTrue(found, "Expected user Fulaninho to be found");
     }
 }

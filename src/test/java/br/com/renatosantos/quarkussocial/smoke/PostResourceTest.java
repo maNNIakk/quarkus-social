@@ -9,8 +9,6 @@ import br.com.renatosantos.quarkussocial.domain.repository.UserRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.Header;
 import io.restassured.response.Response;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.*;
